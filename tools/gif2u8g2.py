@@ -139,11 +139,11 @@ def binarize_image(img, threshold=128, invert=False):
         return img_gray.point(lambda x: 255 if x >= threshold else 0, '1')
 
 
-def image_to_u8g2_data(img, target_width=128, target_height=64):
+def image_to_u8g2_data(img, target_width=128, target_height=64, bg_fill=1):
     """
     将二值化图像转换为 SSD1306 页格式字节数组（自动居中填充到目标尺寸）
     
-    输出始终是 target_width x target_height 的完整数据
+    bg_fill: 填充区域像素值 (0=黑色, 1=白色)
     """
     src_w, src_h = img.size
     src_pixels = img.load()
@@ -157,16 +157,15 @@ def image_to_u8g2_data(img, target_width=128, target_height=64):
     
     for page in range(pages):
         for col in range(target_width):
-            byte_val = 0
+            byte_val = 0xFF if bg_fill else 0x00  # 根据 bg_fill 设置填充区域颜色
             for bit in range(8):
                 row = page * 8 + bit
-                # 映射到源图像坐标
                 src_col = col - offset_x
                 src_row = row - offset_y
-                # 检查是否在源图像范围内
-                if (0 <= src_col < src_w and 0 <= src_row < src_h 
-                    and src_pixels[src_col, src_row]):
-                    byte_val |= (1 << bit)
+                # 源图像内的黑色像素（线条）→ 设为0（黑色）
+                if (0 <= src_col < src_w and 0 <= src_row < src_h
+                    and not src_pixels[src_col, src_row]):
+                    byte_val &= ~(1 << bit)
             data.append(byte_val)
     
     return data
@@ -361,6 +360,8 @@ def main():
     parser.add_argument('-t', '--threshold', type=int, default=128, help='二值化阈值（默认: 128）')
     parser.add_argument('-i', '--invert', action='store_true', help='反转颜色')
     parser.add_argument('-a', '--auto', action='store_true', help='自动检测内容区域并适配尺寸')
+    parser.add_argument('-bg', '--bg', type=int, default=1, choices=[0, 1],
+                        help='填充区域像素值: 0=黑色 1=白色（默认: 1）')
     parser.add_argument('--build', action='store_true', help='转换后自动构建')
     parser.add_argument('--flash', action='store_true', help='构建后自动烧录')
     parser.add_argument('--project-dir', default='.', help='ESP-IDF 项目目录')
@@ -435,7 +436,7 @@ def main():
 
                 resized = resize_image(frame, target_w, target_h, crop_box)
                 binary = binarize_image(resized, args.threshold, args.invert)
-                data = image_to_u8g2_data(binary, 128, 64)
+                data = image_to_u8g2_data(binary, 128, 64, bg_fill=args.bg)
                 all_data.extend(data)
                 print(f"  帧 {idx+1}/{frame_count}: {len(data)} 字节")
 

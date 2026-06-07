@@ -97,7 +97,7 @@ static void gif_play_task(void *pvParameters)
     const int frame_size = GIF_FRAME_SIZE;  // 每帧字节数
     
     // 帧率控制：20fps = 每帧间隔 50ms
-    const TickType_t frame_delay = pdMS_TO_TICKS(25);
+    const TickType_t frame_delay = pdMS_TO_TICKS(50);
 
     ESP_LOGI(TAG, "GIF player started, %d frames", GIF_FRAME_COUNT);
 
@@ -105,7 +105,7 @@ static void gif_play_task(void *pvParameters)
         // 获取 u8g2 显存缓冲区指针
         uint8_t *buf = u8g2_GetBufferPtr(&u8g2);
         
-        // 直接拷贝完整的 1024 字节帧数据（脚本已处理居中）
+        // 直接拷贝帧数据（脚本已处理居中和白底填充）
         memcpy(buf, &gif_frame_data[current_frame * frame_size], frame_size);
         
         // 发送到屏幕
