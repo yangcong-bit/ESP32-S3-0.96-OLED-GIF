@@ -1,5 +1,13 @@
 # ESP32-S3 0.96寸 OLED GIF 动画播放器
 
+<p align="center">
+  <img src="https://img.shields.io/badge/SoC-ESP32--S3-blue" alt="SoC"/>
+  <img src="https://img.shields.io/badge/Display-SSD1306%200.96--inch-orange" alt="Display"/>
+  <img src="https://img.shields.io/badge/library-U8g2-green" alt="U8g2"/>
+  <img src="https://img.shields.io/badge/framework-ESP--IDF%20v5-green" alt="ESP-IDF"/>
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License"/>
+</p>
+
 基于 ESP-IDF 框架，使用 U8g2 图形库驱动 SSD1306 OLED 屏幕播放 GIF 动画的完整项目。
 
 当前播放动画：**呆猫八条**（白底黑线，居中显示）
@@ -50,7 +58,7 @@ ESP32_0.96OLED/
 ### 1. 克隆项目（含 U8g2 子模块）
 
 ```bash
-git clone --recurse-submodules https://gitee.com/yangcongjiang/ESP32_S3_0.96_OLED_GIF.git
+git clone --recurse-submodules https://github.com/yangcong-bit/ESP32_S3_0.96_OLED_GIF.git
 cd ESP32_S3_0.96_OLED_GIF
 ```
 
@@ -150,3 +158,9 @@ GIF → gif2u8g2.py → gif_frames.h (SSD1306页格式) → memcpy到u8g2显存 
 ## 许可证
 
 MIT License
+
+---
+
+## 作者
+
+- **yangcong-bit** · [GitHub](https://github.com/yangcong-bit) · <zys20041022@outlook.com>
